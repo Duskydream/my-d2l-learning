@@ -1,0 +1,1 @@
+This is my repo for learning d2l. I will try to implement all the code in the book and write some notes about it. I hope this repo can help me to understand the book better and also help others who are learning d2l.
