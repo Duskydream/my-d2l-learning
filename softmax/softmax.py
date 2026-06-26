@@ -70,7 +70,18 @@ def evaluate_accuracy(data_loader,W,b):
 lr = 0.1
 num_epochs = 5
 
+train_losses = []
+train_accs = []
+test_accs = []
+
+# ========== 初始化同步绘图 ==========
+plt.ion()  # 开启交互模式
+fig, ax1 = plt.subplots(figsize=(8, 5))
+ax2 = ax1.twinx()  # 创建双y轴，共享x轴
+
 for epoch in range(num_epochs):
+    epoch_loss = 0.0
+    num_batches = 0
     for X, y in train_loader:
         X = X.reshape(X.shape[0], -1)
         
@@ -87,10 +98,16 @@ for epoch in range(num_epochs):
             b -= lr * b.grad
             W.grad.zero_()
             b.grad.zero_()
-    
+            
+        epoch_loss += loss.item()
+        num_batches += 1
+        
+    avg_loss = epoch_loss / num_batches
     train_acc = evaluate_accuracy(train_loader, W, b)
     test_acc = evaluate_accuracy(test_loader, W, b)
-    print(f"Epoch {epoch+1}, Train Acc: {train_acc:.4f}, Test Acc: {test_acc:.4f}")
-
-
-print (f"Final Train Acc: {evaluate_accuracy(train_loader, W, b):.4f}")
+    
+    train_losses.append(avg_loss)
+    train_accs.append(train_acc)
+    test_accs.append(test_acc)
+    
+    print(f"Epoch {epoch+1}, Loss: {avg_loss:.4f}, Train Acc: {train_acc:.4f}, Test Acc: {test_acc:.4f}")
